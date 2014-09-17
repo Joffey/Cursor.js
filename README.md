@@ -5,7 +5,7 @@ Cursor.js
 
 示例
 =========
-
+```html
 <div class="S-table" id="demo1" data-nth="0" data-focus=",,,">
 	<div class="S-tr">
 		<div class="S-td"></div>
@@ -23,6 +23,5 @@ Cursor.js
 	</div>
 </div>
 
-<script>
-  SNTV.Cursor();
-</script>
+```javascript	
+SNTV.Cursor();
