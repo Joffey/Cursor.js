@@ -22,7 +22,8 @@ Cursor.js
 		<div class="S-td"></div>
 	</div>
 </div>
-```
-```javascript	
+
+<script>
 SNTV.Cursor();
+</script>
 ```
