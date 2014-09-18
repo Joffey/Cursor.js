@@ -1,0 +1,14 @@
+/*光标样式 可拷进项目css*/
+.g-focus .bgLt,.g-focus .bgRt,.g-focus .bgLb,.g-focus .bgRb,.g-focus .bgT,.g-focus .bgB{background:url(images/cursor.png)}
+.g-focus{position:absolute;-webkit-transition-duration: 300ms;z-index:1001;}
+.g-focus table{table-layout:fixed;}
+.g-focus .bgL,.g-focus .bgR{background:url(images/cursor-lr.png) repeat-y;}
+.g-focus .bgLt,.g-focus .bgRt,.g-focus .bgLb,.g-focus .bgRb{width:40px;height:40px;}
+.g-focus .bgLt{background-repeat:no-repeat;background-position:0 -40px;}
+.g-focus .bgT{background-repeat:repeat-x;background-position:0 0;}
+.g-focus .bgRt{background-repeat:no-repeat;background-position:-60px -40px;}
+.g-focus .bgL{width:40px;background-position:0 0;}
+.g-focus .bgR{width:40px;background-position:-60px 0;}
+.g-focus .bgLb{background-repeat:no-repeat;background-position:0 -80px;}
+.g-focus .bgB{background-repeat:repeat-x;background-position:0 -120px;}
+.g-focus .bgRb{background-repeat:no-repeat;background-position:-60px -80px}
