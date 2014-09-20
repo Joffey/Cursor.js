@@ -31,9 +31,9 @@
 
 	Cursor.defaults = {
 		wrap: 'body',
-		table: 'S-table',
-		tr: 'S-tr',
-		td: 'S-td',
+		table: 'j-table',
+		tr: 'j-tr',
+		td: 'j-td',
 		// 初始化光标坐标
 		init: [0,0,0],
 		// 循环否
@@ -493,7 +493,7 @@
 		}
 	};
 
-	window.SNTV = {
+	window.TV = {
 		Cursor: Cursor
 	};
 })(window, window.jQuery||window.Zepto);
