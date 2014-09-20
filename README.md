@@ -23,6 +23,6 @@ Cursor.js
 	</div>
 </div>
 <script>
-SNTV.Cursor();
+TV.Cursor();
 </script>
 ```
