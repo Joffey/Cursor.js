@@ -6,20 +6,20 @@ Cursor.js
 示例
 =========
 ```html
-<div class="S-table" id="demo1" data-nth="0" data-focus=",,,">
-	<div class="S-tr">
-		<div class="S-td"></div>
-		<div class="S-td"></div>
-		<div class="S-td"></div>
-		<div class="S-td"></div>
-		<div class="S-td"></div>
+<div class="j-table" id="demo1" data-nth="0" data-focus=",,,">
+	<div class="j-tr">
+		<div class="j-td"></div>
+		<div class="j-td"></div>
+		<div class="j-td"></div>
+		<div class="j-td"></div>
+		<div class="j-td"></div>
 	</div>
-	<div class="S-tr">
-		<div class="S-td"></div>
-		<div class="S-td"></div>
-		<div class="S-td"></div>
-		<div class="S-td"></div>
-		<div class="S-td"></div>
+	<div class="j-tr">
+		<div class="j-td"></div>
+		<div class="j-td"></div>
+		<div class="j-td"></div>
+		<div class="j-td"></div>
+		<div class="j-td"></div>
 	</div>
 </div>
 <script>
