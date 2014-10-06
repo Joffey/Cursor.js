@@ -447,19 +447,6 @@
 		// 绑定
 		_bind: function(){
 			var _this = this;
-			/**
-			 * 当一个元素获得焦点时，是否阻止在该元素内部使用遥控器上下键的默认事件，
-			 * 如果阻止的话按上下键就不会在元素内部滚动滚动条，即静止不动
-			 * 阻止在有些情况下是必须的，有些情况下是不能够的
-			 * @param  {[type]} e 事件e
-			 */
-			function preventupdown(e, $f){
-				var $f = _this.getFocusing();;
-				prevent = $f.data('preventupdown');
-				if(prevent !== 'no'){
-					e.preventDefault();	
-				}
-			}
 			
 
 			$(document).keydown(function(e){
@@ -472,7 +459,7 @@
 						break;
 					case 38:
 						_this.goup(_this.getFocusing());
-						preventupdown(e);
+						e.preventDefault();
 						break;
 					case 39:
 						_this.goright(_this.getFocusing());
@@ -480,7 +467,7 @@
 						break;
 					case 40:
 						_this.godown(_this.getFocusing());
-						preventupdown(e);
+						e.preventDefault();
 						break;
 					case 13:
 						_this.ok(_this.getFocusing());
