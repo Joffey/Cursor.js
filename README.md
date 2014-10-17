@@ -1,9 +1,9 @@
 Cursor.js
 =========
 
-安卓电视端光标（焦点框）移动插件，依赖于jQuery或Zepto。
+安卓电视端光标（焦点框）移动插件，依赖于jQuery或Zepto。支持异步加载后焦点定位，手动控制焦点定位等。
 
-示例
+简单示例
 =========
 ```html
 <div class="j-table" id="demo1" data-nth="0" data-focus=",,,">
@@ -23,6 +23,6 @@ Cursor.js
 	</div>
 </div>
 <script>
-TV.Cursor();
+var cs = TV.Cursor();
 </script>
 ```
