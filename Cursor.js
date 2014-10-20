@@ -1,6 +1,8 @@
 /**
- * 该插件主要解决安卓电视webview内嵌的html5页面中焦点框移动的问题
+ * 解决安卓电视webview内嵌的html5页面中焦点框移动的问题
+ * 采用的是html中table的布局思路，但不局限于table的布局
  * @author rangzf
+ * @site   http://wqd.me
  * @time 2014/06/06
  */
 
@@ -8,7 +10,7 @@
 ;(function(window, $){
 
 	Function.prototype.before = function(fn){
-		// 保存一份当前函数实例(这里f)
+		// 保存一份当前函数实例
 		var _this = this;
 		
 		return function(){
@@ -36,10 +38,9 @@
 		td: 'j-td',
 		// 初始化光标坐标
 		init: [0,0,0],
-		// 循环否
-		loop: false,
 		//光标
 		$cursor: null,
+		// 每次移动都执行的函数
 		keydownFn: function(){}
 	};
 
@@ -51,12 +52,12 @@
 		$.extend(this, Cursor.defaults, conf);
 		
 		this.$table = $('.' + this.table);
-		// 矩阵，存放位置信息
+		// 多维数组，存放位置信息
 		this.matrix = [];
 		this.n0 = this.init[0];// table
 		this.n1 = this.init[1];// tr
 		this.n2 = this.init[2];// td
-		// 当前layout中保存的上下左右信息，沟通layout之间
+		// 当前table中保存的上下左右信息，沟通table之间
 		this.data = [];
 		this.$now = null;
 		this.$focusing = null;
@@ -84,15 +85,17 @@
 			this.$cursor = $(focusHTML).appendTo($(this.wrap)).hide();
 			// 为了解决电视机上初始化时定位错误的问题，加延时
 			setTimeout(function(){
-			// debugger
 				_this.focus();
-				_this.keydownFn(_this.getFocusing());
-				_this.$cursor.show();	
+				var $f = _this.getFocusing()
+				_this.keydownFn($f);
+				if($f.data('type') !== 'focus'){
+					_this.$cursor.show();	
+				}
 			}, 100);
 		},
 
 		/**
-		 * @param  {{Array}} arguments[0] 欲获得焦点的S-td数组
+		 * @param  {{Array}} arguments[0] 欲获得焦点的j-td数组
 		 */
 		focus: function(){
 			// 指定
@@ -110,7 +113,6 @@
 			var $f = this.getFocusing();
 
 			$f.addClass('s-cursoring');
-			// debugger
 			// 如果当前focusing的元素属性中data-type值为focus则表示没有跟随光标，
 			// 采用该元素在css中设置的focus样式，并隐藏跟随光标
 			// 否则将跟随光标移动到当前元素上来,并显示粗来
@@ -138,7 +140,11 @@
 				}
 			}
 		},
-		// 计算得到矩阵
+
+		/**
+		 * 扫描页面，填充matrix多维数组
+		 * @param  {Object} $table 需要被push到数组中的table
+		 */
 		push: function($table){
 			var _this = this;
 			var tr = _this.tr, td = _this.td, matrix = _this.matrix, i;
@@ -157,7 +163,6 @@
 						$(this).attr({
 							'data-matrix': i + '-' + j + '-' + index
 						});
-
 						
 						// 保存位置信息
 						$(this).attr({
@@ -188,33 +193,32 @@
 			this.$table = $('.' + this.table);
 		},
 		
-		// 重新设置下一个获得焦点的元素
-		// 用于跨table时的通讯
-		// 具有记忆从tableA中的哪个元素进入tableB，回去的时候能够记住路径
-		setMatrix: function(arr, dir){
+		
+		/**
+		 * 重新设置下一个获得焦点的元素，用于跨table时的通讯，具有记忆从tableA中的哪个元素进入tableB，方便记住你来时的路
+		 * @param {Array} arr 新焦点元素在matrix中的坐标
+		 * @param {String} dir 方向，用于重置原本的值
+		 */
+		_setMatrix: function(arr, dir){
 			var $f = this.getFocusing(),
-				remember = this.$table.filter('[data-nth="' + this.n0 + '"]').data('remember');
-			// debugger
-
+					remember = this.$table.filter('[data-nth="' + this.n0 + '"]').data('remember');
 			var m = $f.data('matrix');//当前坐标
 			this.n0 = parseInt(arr[0], 10);
 			this.n1 = parseInt(arr[1], 10);
 			this.n2 = parseInt(arr[2], 10);
-			$f = this.matrix[this.n0][this.n1][this.n2];//新焦点元素
-			
-			
-			
+			//新焦点元素
+			$f = this.matrix[this.n0][this.n1][this.n2];
+
 			if(remember !== 'no'){
-				// debugger
 				$f = $f.length === 2 ? $f[0] : $f;
 				//如果是从“右边”进入，则n就是“左边”
-				var n = dir === 'right' ? 3 : dir === 'left' ? 1 : dir === 'top' ? 2 : dir === 'down' ? 0 : "";
-				//找到新焦点的S-table父元素，替换它的focus属性中，返回路径的值
+				var n = dir === 'right' ? 3 : dir === 'left' ? 1 : dir === 'up' ? 2 : dir === 'down' ? 0 : "";
+				//找到新焦点的j-table父元素，替换它的focus属性中，返回路径的值
 				var p = this.$table.filter('[data-nth="' + this.n0 + '"]');
 				try{
 					var arr = p.data('focus').split(',');
-				}catch(err){
-					throw new Error('需要先将所有的S-table都加上data-focus属性哦亲');
+				}catch(e){
+					throw new Error('需要先将所有的j-table都加上data-focus属性');
 				}
 				
 				arr[n] = m;
@@ -222,7 +226,7 @@
 			}
 		},
 
-		// 保存当前focusing的元素的父级元素（S-table）的data-focus属性值
+		// 保存当前focusing的元素的父级元素（j-table）的data-focus属性值
 		getData: function(){
 			var data = this.$table.filter('[data-nth="' + this.n0 + '"]').data('focus');
 			
@@ -263,22 +267,14 @@
 
 					// 如果溢出
 					if(this.n2 >= tdLen -1){
-						if(this.$table.filter('[data-nth="' + this.n0 + '"]').attr('loop') != undefined || this.loop){
-								this.n1 = this.n2 = 0;
-						// 不循环，下面还有表，换表
+						this.getData();
+						var data_right = this.data[1];
+						if(data_right !== ""){
+							data_right = data_right.split('-');
+							this._setMatrix(data_right, 'right');
 						}else{
-							// this.n2 = tdLen - 1;
-							// debugger;
-							this.getData();
-							var data_right = this.data[1];
-							if(data_right !== ""){
-								data_right = data_right.split('-');
-								this.setMatrix(data_right, 'right');
-							}else{
-								this.n2 = _n2;
-								// debugger
-								return;
-							}
+							this.n2 = _n2;
+							return;
 						}
 					}
 				// 没有colspan
@@ -290,23 +286,9 @@
 				this.getData();
 				var data_right = this.data[1];
 				// 向右跨table
-				if(data_right === ""){
-
-					// 下面还有行,换行
-					if(this.n1 < trLen - 1){
-					// 循环
-					}else if(this.$table.filter('[data-nth="' + this.n0 + '"]').attr('loop') != undefined || this.loop){
-						this.n1 = 0;
-						this.n2 = 0;
-					// 不循环	
-					}else if(this.n0 < this.matrix.length - 1){
-					}else{
-						return;
-					}
-				}else{
+				if(data_right){
 					data_right = data_right.split('-');
-					this.setMatrix(data_right, 'right');
-					// debugger
+					this._setMatrix(data_right, 'right');
 				}
 			};
 		},
@@ -334,20 +316,14 @@
 					}
 					// 如果溢出
 					if(this.n2 < 0){
-						if(this.$table.filter('[data-nth="' + this.n0 + '"]').attr('loop') != undefined || this.loop){
-							this.n1 = trArr.length - 1;
-							this.n2 = trArr[this.n1].length - 1;
+						this.getData();
+						var data_left = this.data[3];
+						if(data_left !== ""){
+							data_left = data_left.split('-');
+							this._setMatrix(data_left, 'left');	
 						}else{
-							this.getData();
-							var data_left = this.data[3];
-							if(data_left !== ""){
-								data_left = data_left.split('-');
-								this.setMatrix(data_left, 'left');	
-							}else{
-
-								this.n2 = _n2;
-								return;
-							}
+							this.n2 = _n2;
+							return;
 						}
 					}
 				}else{
@@ -357,17 +333,10 @@
 			}else{
 				this.getData();
 				var data_left = this.data[3];
-				// debugger
-				if(data_left === ""){
-					if(this.$table.filter('[data-nth="' + this.n0 + '"]').attr('loop') != undefined || this.loop){
-						this.n1 = trArr.length - 1;
-						this.n2 = trArr[this.n1].length - 1;
-					}
-				}else{
+				if(data_left){
 					data_left = data_left.split('-');
-					this.setMatrix(data_left, 'left');
+					this._setMatrix(data_left, 'left');
 				}
-				
 			};
 		},
 		getup: function(){
@@ -380,44 +349,25 @@
 			}else{
 				this.getData();
 				var data_up = this.data[0];	
-				if(data_up != ""){
+				if(data_up){
 					data_up = data_up.split('-');
-					this.setMatrix(data_up, 'up');
-				// 上头没表
-				}else{
-
-					// 循环
-					if(this.$table.filter('[data-nth="' + this.n0 + '"]').attr('loop') != undefined || this.loop){
-						this.n1 = trArr.length - 1;
-					// 不循环，返回
-					}else{
-						return false;	
-					}
+					this._setMatrix(data_up, 'up');
 				}	
 			}
 		},
 		getdown: function(){
 			var trArr = this.matrix[this.n0],
-				trLen = trArr.length;
+					trLen = trArr.length;
 			// 没到最后一行
 			if(this.n1 < trLen - 1){
 				++this.n1;
-			// 下面还有表，换表
+			// 换table
 			}else{
 				this.getData();
 				var data_down = this.data[2];
-				if(data_down != ""){
+				if(data_down){
 					data_down = data_down.split('-');
-					this.setMatrix(data_down, 'down');
-				// 下面没表
-				}else{
-					// 循环
-					if(this.$table.filter('[data-nth="' + this.n0 + '"]').attr('loop') != undefined || this.loop){
-						this.n1 = 0;
-					// 不循环，返回
-					}else{
-						return false;	
-					}
+					this._setMatrix(data_down, 'down');
 				}
 			};
 		},
@@ -483,4 +433,4 @@
 	window.TV = {
 		Cursor: Cursor
 	};
-})(window, window.jQuery||window.Zepto);
+})(window, window.jQuery || window.Zepto);
