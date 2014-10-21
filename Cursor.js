@@ -38,8 +38,6 @@
 		td: 'j-td',
 		// 初始化光标坐标
 		init: [0,0,0],
-		//光标
-		$cursor: null,
 		// 每次移动都执行的函数
 		keydownFn: function(){}
 	};
@@ -52,6 +50,9 @@
 		$.extend(this, Cursor.defaults, conf);
 		
 		this.$table = $('.' + this.table);
+		
+		//光标
+		this.$cursor = null;
 		// 多维数组，存放位置信息
 		this.matrix = [];
 		this.n0 = this.init[0];// table
