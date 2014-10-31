@@ -114,31 +114,33 @@
 			var $f = this.getFocusing();
 
 			$f.addClass('s-cursoring');
+
 			// 如果当前focusing的元素属性中data-type值为focus则表示没有跟随光标，
 			// 采用该元素在css中设置的focus样式，并隐藏跟随光标
 			// 否则将跟随光标移动到当前元素上来,并显示粗来
-			
 			if($f.data('type') === 'focus'){
 				$f.focus();
 				this.$cursor.hide();
+
+				return;
+			}
+
+			if(this.wrap === 'body'){
+				$f.focus();
+				this.$cursor.css({
+					width: parseInt($f.css('width')) + 70 + 'px',
+					height: parseInt($f.css('height')) + 70 + 'px',
+					left: parseInt($f.offset().left) - 35 + 'px',
+					top: parseInt($f.offset().top) - 35 + 'px'
+				}).show();
 			}else{
-				if(this.wrap === 'body'){
-					$f.focus();
-					this.$cursor.css({
-						width: parseInt($f.css('width')) + 70 + 'px',
-						height: parseInt($f.css('height')) + 70 + 'px',
-						left: parseInt($f.offset().left) - 35 + 'px',
-						top: parseInt($f.offset().top) - 35 + 'px'
-					}).show();
-				}else{
-					document.activeElement.blur();
-					this.$cursor.css({
-						left: parseInt($f.position().left) - 35 + 'px',
-						top: parseInt($f.position().top) - 35 + 'px',
-						width: parseInt($f.css('width')) + 70 + 'px',
-						height: parseInt($f.css('height')) + 70 + 'px'
-					}).show();
-				}
+				document.activeElement.blur();
+				this.$cursor.css({
+					left: parseInt($f.position().left) - 35 + 'px',
+					top: parseInt($f.position().top) - 35 + 'px',
+					width: parseInt($f.css('width')) + 70 + 'px',
+					height: parseInt($f.css('height')) + 70 + 'px'
+				}).show();
 			}
 		},
 
@@ -228,7 +230,7 @@
 		},
 
 		// 保存当前focusing的元素的父级元素（j-table）的data-focus属性值
-		getData: function(){
+		_getData: function(){
 			var data = this.$table.filter('[data-nth="' + this.n0 + '"]').data('focus');
 			
 			return this.data = data === undefined ? ["","","",""] : data.split(',');
@@ -243,7 +245,7 @@
 		_removePrevClass: function(){
 			this.getFocusing().removeClass('s-cursoring');
 		},
-		getright: function(){
+		_getright: function(){
 			var trArr = this.matrix[this.n0],//table
 				//行 
 				tdArr = this.matrix[this.n0][this.n1],
@@ -268,13 +270,14 @@
 
 					// 如果溢出
 					if(this.n2 >= tdLen -1){
-						this.getData();
+						this._getData();
 						var data_right = this.data[1];
 						if(data_right !== ""){
 							data_right = data_right.split('-');
 							this._setMatrix(data_right, 'right');
 						}else{
 							this.n2 = _n2;
+
 							return;
 						}
 					}
@@ -284,7 +287,7 @@
 				}
 			// 到尾
 			}else{
-				this.getData();
+				this._getData();
 				var data_right = this.data[1];
 				// 向右跨table
 				if(data_right){
@@ -294,7 +297,7 @@
 			};
 		},
 
-		getleft: function(){
+		_getleft: function(){
 			var trArr = this.matrix[this.n0],
 				tdArr = trArr[this.n1],
 				trLen = trArr.length,
@@ -317,13 +320,14 @@
 					}
 					// 如果溢出
 					if(this.n2 < 0){
-						this.getData();
+						this._getData();
 						var data_left = this.data[3];
 						if(data_left !== ""){
 							data_left = data_left.split('-');
 							this._setMatrix(data_left, 'left');	
 						}else{
 							this.n2 = _n2;
+							
 							return;
 						}
 					}
@@ -332,7 +336,7 @@
 				}
 			// 到行头
 			}else{
-				this.getData();
+				this._getData();
 				var data_left = this.data[3];
 				if(data_left){
 					data_left = data_left.split('-');
@@ -340,7 +344,7 @@
 				}
 			};
 		},
-		getup: function(){
+		_getup: function(){
 			var trArr = this.matrix[this.n0],
 				trLen = trArr.length;
 			// 还没到第一行
@@ -348,7 +352,7 @@
 				--this.n1;
 			// 到第一行，需要换table
 			}else{
-				this.getData();
+				this._getData();
 				var data_up = this.data[0];	
 				if(data_up){
 					data_up = data_up.split('-');
@@ -356,7 +360,7 @@
 				}	
 			}
 		},
-		getdown: function(){
+		_getdown: function(){
 			var trArr = this.matrix[this.n0],
 					trLen = trArr.length;
 			// 没到最后一行
@@ -364,7 +368,7 @@
 				++this.n1;
 			// 换table
 			}else{
-				this.getData();
+				this._getData();
 				var data_down = this.data[2];
 				if(data_down){
 					data_down = data_down.split('-');
@@ -374,22 +378,22 @@
 		},
 		goright: function(){
 			this._removePrevClass();
-			this.getright();	
+			this._getright();	
 			this.focus();
 		},
 		goleft: function(){
 			this._removePrevClass();
-			this.getleft();
+			this._getleft();
 			this.focus();
 		},
 		goup: function(){
 			this._removePrevClass();
-			this.getup();
+			this._getup();
 			this.focus();
 		},
 		godown: function(){
 			this._removePrevClass();
-			this.getdown();
+			this._getdown();
 			this.focus();
 		},
 		ok: function($f){
