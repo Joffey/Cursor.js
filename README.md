@@ -23,6 +23,6 @@ Cursor.js
 	</div>
 </div>
 <script>
-var cs = TV.Cursor();
+var cs = Cursor();
 </script>
 ```
