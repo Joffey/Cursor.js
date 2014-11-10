@@ -1,0 +1,10 @@
+{
+  "name": "CursorJs",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-uglify": "*"
+  }
+}
