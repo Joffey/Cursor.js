@@ -192,8 +192,8 @@
 						'data-matrix': i + '-' + j + '-' + index
 					});
 
-					// NaN !== NaN
-					if('' + colspan !== 'NaN'){
+					
+					if(!isNaN(colspan)){
 						var _colspan = colspan,
 							left = 2, right = _colspan - 1;
 						// 如果是colspan=n这种形式，则第一个元素存储形式为数组[$obj, colspan],colspan表明跳列个数
